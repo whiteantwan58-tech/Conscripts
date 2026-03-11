@@ -35,6 +35,42 @@
                     </StackPanel>
                 </Button>
             </controls:SettingsCard>
+            <TextBlock x:Uid="SettingsProfileTextBlock" Margin="4,10,0,10" FontWeight="Bold" FontSize="14"/>
+            <controls:SettingsCard x:Uid="SettingsProfileNameSettingsCard">
+                <controls:SettingsCard.HeaderIcon>
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE77B;"/>
+                </controls:SettingsCard.HeaderIcon>
+                <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock x:Name="SettingsProfileNameTextBlock" VerticalAlignment="Center" FontSize="14" Opacity="0.7" MaxWidth="200" TextTrimming="CharacterEllipsis"
+                               Text="{x:Bind _viewModel.AppSettings.UserName,Mode=OneWay}"/>
+                    <Button x:Name="SettingsProfileEditButton" Height="32" MinWidth="80" Click="OnClickEditProfile">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE70F;" FontSize="13"/>
+                            <TextBlock x:Uid="SettingsProfileEditTextBlock"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </controls:SettingsCard>
+            <Grid x:Name="SettingsProfileEditGrid" Visibility="Collapsed" Margin="0,4,0,0">
+                <controls:SettingsCard>
+                    <controls:SettingsCard.HeaderIcon>
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE8AC;"/>
+                    </controls:SettingsCard.HeaderIcon>
+                    <controls:SettingsCard.Header>
+                        <TextBlock x:Uid="SettingsProfileEditNameLabelTextBlock" FontSize="13"/>
+                    </controls:SettingsCard.Header>
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <TextBox x:Name="SettingsProfileNameEditTextBox" MinWidth="160" MaxWidth="200" MaxLength="64" FontSize="14"
+                                 KeyDown="SettingsProfileNameEditTextBox_KeyDown"/>
+                        <Button x:Name="SettingsProfileSaveButton" Height="32" MinWidth="72" Style="{ThemeResource AccentButtonStyle}" Click="OnClickSaveProfile">
+                            <TextBlock x:Uid="SettingsProfileSaveTextBlock"/>
+                        </Button>
+                        <Button x:Name="SettingsProfileCancelButton" Height="32" MinWidth="72" Click="OnClickCancelEditProfile">
+                            <TextBlock x:Uid="SettingsProfileCancelTextBlock"/>
+                        </Button>
+                    </StackPanel>
+                </controls:SettingsCard>
+            </Grid>
             <TextBlock x:Uid="SettingsPersonalizationTextBlock" Margin="4,10,0,10" FontWeight="Bold" FontSize="14"/>
             <controls:SettingsCard x:Uid="SettingsThemeSettingsCard">
                 <controls:SettingsCard.HeaderIcon>

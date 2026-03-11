@@ -4,6 +4,7 @@ using Conscripts.Helpers;
 using Conscripts.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Windows.ApplicationModel;
 using Windows.System;
 
@@ -26,9 +27,8 @@ namespace Conscripts.Views
         }
 
         /// <summary>
-        /// ��ȡ�汾��
+        /// 获取版本号
         /// </summary>
-        /// <returns></returns>
         private string GetAppVersion()
         {
             try
@@ -47,10 +47,8 @@ namespace Conscripts.Views
         }
 
         /// <summary>
-        /// �������
+        /// 去商店评分
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void OnClickGoToStoreRate(object sender, RoutedEventArgs e)
         {
             try
@@ -61,10 +59,8 @@ namespace Conscripts.Views
         }
 
         /// <summary>
-        /// �鿴����Ŀ¼
+        /// 查看数据目录
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void OnClickDbPath(object sender, RoutedEventArgs e)
         {
             try
@@ -76,10 +72,8 @@ namespace Conscripts.Views
         }
 
         /// <summary>
-        /// ���� GitHub
+        /// 打开 GitHub
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private async void OnClickGoGitHub(object sender, RoutedEventArgs e)
         {
             try
@@ -90,12 +84,90 @@ namespace Conscripts.Views
         }
 
         /// <summary>
-        /// ����UI
+        /// 编辑用户名
+        /// </summary>
+        private void OnClickEditProfile(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SettingsProfileNameEditTextBox.Text = _viewModel.AppSettings.UserName;
+                SettingsProfileEditGrid.Visibility = Visibility.Visible;
+                SettingsProfileEditButton.Visibility = Visibility.Collapsed;
+                SettingsProfileNameEditTextBox.Focus(FocusState.Programmatic);
+                SettingsProfileNameEditTextBox.SelectAll();
+            }
+            catch (Exception ex) { System.Diagnostics.Trace.WriteLine(ex); }
+        }
+
+        /// <summary>
+        /// 保存用户名
+        /// </summary>
+        private void OnClickSaveProfile(object sender, RoutedEventArgs e)
+        {
+            SaveProfile();
+        }
+
+        /// <summary>
+        /// 在名称输入框中按下回车键时保存
+        /// </summary>
+        private void SettingsProfileNameEditTextBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                SaveProfile();
+            }
+            else if (e.Key == Windows.System.VirtualKey.Escape)
+            {
+                CancelEditProfile();
+            }
+        }
+
+        /// <summary>
+        /// 取消编辑用户名
+        /// </summary>
+        private void OnClickCancelEditProfile(object sender, RoutedEventArgs e)
+        {
+            CancelEditProfile();
+        }
+
+        /// <summary>
+        /// 保存用户名到设置
+        /// </summary>
+        private void SaveProfile()
+        {
+            try
+            {
+                string name = SettingsProfileNameEditTextBox.Text?.Trim() ?? string.Empty;
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    _viewModel.AppSettings.UserName = name;
+                }
+                CancelEditProfile();
+            }
+            catch (Exception ex) { System.Diagnostics.Trace.WriteLine(ex); }
+        }
+
+        /// <summary>
+        /// 取消并隐藏编辑区域
+        /// </summary>
+        private void CancelEditProfile()
+        {
+            try
+            {
+                SettingsProfileEditGrid.Visibility = Visibility.Collapsed;
+                SettingsProfileEditButton.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex) { System.Diagnostics.Trace.WriteLine(ex); }
+        }
+
+        /// <summary>
+        /// 重置UI
         /// </summary>
         public void ResetLayout()
         {
             try
             {
+                CancelEditProfile();
                 SettingsScrollViewer.ChangeView(0, 0, null, true);
             }
             catch (Exception ex) { System.Diagnostics.Trace.WriteLine(ex); }

@@ -9,6 +9,8 @@ namespace Conscripts.Helpers
         private const string SETTING_NAME_APPEARANCEINDEX = "AppearanceIndex";
         private const string SETTING_NAME_BACKDROPINDEX = "BackdropIndex";
         private const string SETTING_NAME_ONESHOTMODE = "IsOneShotModeEnabled";
+        private const string SETTING_NAME_USERNAME = "UserName";
+        private const string SETTING_NAME_ISREGISTERED = "IsRegistered";
 
         private ApplicationDataContainer _localSettings = ApplicationData.Current.LocalSettings;
 
@@ -20,6 +22,10 @@ namespace Conscripts.Helpers
         private int _backdropIndex = -1;
 
         private bool? _oneShotEnabled = null;
+
+        private string _userName = null;
+
+        private bool? _isRegistered = null;
 
         /// <summary>
         /// 设置的应用程序的主题 0-System 1-Dark 2-Light
@@ -140,6 +146,61 @@ namespace Conscripts.Helpers
             {
                 SetProperty(ref _oneShotEnabled, value);
                 ApplicationData.Current.LocalSettings.Values[SETTING_NAME_ONESHOTMODE] = _oneShotEnabled;
+            }
+        }
+
+        /// <summary>
+        /// 用户注册的显示名称
+        /// </summary>
+        public string UserName
+        {
+            get
+            {
+                try
+                {
+                    if (_userName is null)
+                    {
+                        _userName = _localSettings.Values[SETTING_NAME_USERNAME]?.ToString() ?? string.Empty;
+                    }
+                }
+                catch (Exception ex) { System.Diagnostics.Trace.WriteLine(ex); }
+                return _userName ?? string.Empty;
+            }
+            set
+            {
+                SetProperty(ref _userName, value ?? string.Empty);
+                ApplicationData.Current.LocalSettings.Values[SETTING_NAME_USERNAME] = _userName;
+            }
+        }
+
+        /// <summary>
+        /// 是否已完成用户注册
+        /// </summary>
+        public bool IsRegistered
+        {
+            get
+            {
+                try
+                {
+                    if (_isRegistered is null)
+                    {
+                        if (_localSettings.Values[SETTING_NAME_ISREGISTERED]?.ToString() == "True")
+                        {
+                            _isRegistered = true;
+                        }
+                        else
+                        {
+                            _isRegistered = false;
+                        }
+                    }
+                }
+                catch (Exception ex) { System.Diagnostics.Trace.WriteLine(ex); }
+                return _isRegistered ?? false;
+            }
+            set
+            {
+                SetProperty(ref _isRegistered, value);
+                ApplicationData.Current.LocalSettings.Values[SETTING_NAME_ISREGISTERED] = _isRegistered;
             }
         }
     }
