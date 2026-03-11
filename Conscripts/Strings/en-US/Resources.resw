@@ -374,4 +374,46 @@ File name is</value>
   <data name="WhatsNewUpdateTitle2024NovRun5.Text" xml:space="preserve">
     <value>A new "One Shot mode" setting has been added. When enabled, the program will automatically exit after the script finishes running.</value>
   </data>
+  <data name="RegistrationWelcomeTitleTextBlock.Text" xml:space="preserve">
+    <value>Welcome to Conscripts</value>
+  </data>
+  <data name="RegistrationWelcomeSubtitleTextBlock.Text" xml:space="preserve">
+    <value>Tell us your name to get started</value>
+  </data>
+  <data name="RegistrationNameLabelTextBlock.Text" xml:space="preserve">
+    <value>Your Name</value>
+  </data>
+  <data name="RegistrationNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter your name</value>
+  </data>
+  <data name="RegistrationNameErrorTextBlock.Text" xml:space="preserve">
+    <value>Please enter your name to continue</value>
+  </data>
+  <data name="RegistrationGetStartedButton.Content" xml:space="preserve">
+    <value>Get Started</value>
+  </data>
+  <data name="RegistrationSkipHyperlinkButton.Content" xml:space="preserve">
+    <value>Skip for now</value>
+  </data>
+  <data name="SettingsProfileTextBlock.Text" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="SettingsProfileNameSettingsCard.Header" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="SettingsProfileNameSettingsCard.Description" xml:space="preserve">
+    <value>Your registered display name</value>
+  </data>
+  <data name="SettingsProfileEditTextBlock.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="SettingsProfileEditNameLabelTextBlock.Text" xml:space="preserve">
+    <value>New Name</value>
+  </data>
+  <data name="SettingsProfileSaveTextBlock.Text" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SettingsProfileCancelTextBlock.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>
