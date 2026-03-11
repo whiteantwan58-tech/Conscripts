@@ -8,7 +8,7 @@
   IgnorableNamespaces="uap rescap">
 
 	<Identity
-	  Name="22189NoMewing.PowerShortcut-"
+	  Name="QuantumSovereignLogisticsCorp.Conscripts"
 	  Publisher="CN=E6D8FAFA-3EF4-4E47-B885-52144C67BFF5"
 	  Version="1.3.4.0" />
 
@@ -16,7 +16,7 @@
 
 	<Properties>
 		<DisplayName>Conscripts</DisplayName>
-		<PublisherDisplayName>No Mewing</PublisherDisplayName>
+		<PublisherDisplayName>Quantum Sovereign Logistics Corp</PublisherDisplayName>
 		<Logo>Assets\Manifest\StoreLogo.png</Logo>
 	</Properties>
 

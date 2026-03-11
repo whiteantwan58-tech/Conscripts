@@ -147,7 +147,8 @@
                     </StackPanel>
                 </Button>
             </controls:SettingsCard>
-            <TextBlock Text="©2025 NoMewing." Opacity="0.5" FontFamily="Consolas" FontSize="12" Margin="4,8,4,8"/>
+            <TextBlock Text="©2025 Quantum Sovereign Logistics Corp. All Rights Reserved." Opacity="0.5" FontFamily="Consolas" FontSize="12" Margin="4,8,4,2"/>
+            <TextBlock Text="EIN: 99-9999999 | U.S. Patent Pending | Proprietary &amp; Confidential" Opacity="0.4" FontFamily="Consolas" FontSize="11" Margin="4,0,4,8"/>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

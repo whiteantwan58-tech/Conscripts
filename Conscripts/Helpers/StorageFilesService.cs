@@ -20,7 +20,7 @@ namespace Conscripts.Helpers
             if (DataFolder == null)
             {
                 StorageFolder documentsFolder = await StorageFolder.GetFolderFromPathAsync(UserDataPaths.GetDefault().Documents);
-                var noMewingFolder = await documentsFolder.CreateFolderAsync("NoMewing", CreationCollisionOption.OpenIfExists);
+                var noMewingFolder = await documentsFolder.CreateFolderAsync("QuantumSovereignLogistics", CreationCollisionOption.OpenIfExists);
                 DataFolder = await noMewingFolder.CreateFolderAsync("Conscript", CreationCollisionOption.OpenIfExists);
             }
             return DataFolder;
