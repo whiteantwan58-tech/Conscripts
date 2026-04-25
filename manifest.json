@@ -1,0 +1,26 @@
+{
+  "name": "CEC-WAM-HOT-CORE",
+  "short_name": "CEC-WAM",
+  "description": "Unified System Interface · Offline-First · PWA · Data Ingestion · Charts · EVE Voice Interface",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "Conscripts/Assets/Conscripts_Logo.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities"],
+  "screenshots": [
+    {
+      "src": "Conscripts/Assets/screenshot1.png",
+      "type": "image/png",
+      "label": "Conscripts Desktop App"
+    }
+  ]
+}
