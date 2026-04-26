@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d1117" />
+  <meta name="description" content="CEC-WAM-HOT-CORE · Unified System Interface · Offline-First · PWA" />
+  <title>CEC‑WAM‑HOT‑CORE</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="Conscripts/Assets/Conscripts_Logo.png" />
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #30363d;
+      --accent:    #58a6ff;
+      --accent2:   #3fb950;
+      --warn:      #d29922;
+      --danger:    #f85149;
+      --text:      #e6edf3;
+      --text-muted:#8b949e;
+      --radius:    8px;
+      --font:      "Segoe UI", system-ui, sans-serif;
+    }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Scrollbar ─────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header img { height: 36px; width: 36px; border-radius: 6px; }
+    header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: .5px; color: var(--accent); }
+    header .tagline { font-size: .8rem; color: var(--text-muted); }
+    header .spacer { flex: 1; }
+    #installBtn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 7px 16px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+    }
+    #installBtn:hover { opacity: .85; }
+    #statusDot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--danger);
+      margin-left: 8px;
+      title: "Offline";
+    }
+    #statusDot.online { background: var(--accent2); }
+
+    /* ── Nav tabs ─────────────────────────────────────────────── */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      overflow-x: auto;
+      padding: 0 16px;
+    }
+    nav button {
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: .9rem;
+      padding: 12px 18px;
+      transition: color .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    nav button.active, nav button:hover { color: var(--text); }
+    nav button.active { border-bottom-color: var(--accent); }
+
+    /* ── Main ─────────────────────────────────────────────────── */
+    main { flex: 1; overflow: auto; padding: 24px; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Cards / sections ─────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; color: var(--accent); }
+    .card h3 { font-size: .9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
+
+    /* ── Form controls ────────────────────────────────────────── */
+    input[type="text"], input[type="url"], input[type="password"], textarea, select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: .9rem;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    label { font-size: .85rem; color: var(--text-muted); display: block; margin-bottom: 4px; }
+    .field { margin-bottom: 14px; }
+
+    button.btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 9px 20px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
+    button.btn:hover { opacity: .85; }
+    button.btn.secondary {
+      background: var(--border);
+      color: var(--text);
+    }
+    button.btn.danger { background: var(--danger); color: #fff; }
+    button.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── Table ────────────────────────────────────────────────── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    thead th {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 10px 12px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    tbody tr:nth-child(odd) { background: rgba(255,255,255,.02); }
+    tbody td { padding: 8px 12px; border-bottom: 1px solid var(--border); overflow-wrap: break-word; }
+    tbody tr:hover { background: rgba(88,166,255,.06); }
+
+    /* ── Chart container ──────────────────────────────────────── */
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+    .chart-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .chart-box canvas { max-height: 280px; }
+
+    /* ── EVE / Voice panel ────────────────────────────────────── */
+    #eveOutput {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      min-height: 120px;
+      padding: 14px;
+      font-size: .9rem;
+      white-space: pre-wrap;
+      color: var(--accent2);
+      font-family: "Cascadia Code", "Consolas", monospace;
+    }
+    #micBtn {
+      background: var(--danger);
+      color: #fff;
+      font-size: 1.4rem;
+      border: none;
+      border-radius: 50%;
+      width: 54px; height: 54px;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    #micBtn.listening { animation: pulse 1s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(248,81,73,.5); }
+      50%      { box-shadow: 0 0 0 12px rgba(248,81,73,0); }
+    }
+    .eve-controls { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 12px; }
+
+    /* ── Stat chips ───────────────────────────────────────────── */
+    .stats-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    .stat-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      min-width: 140px;
+      flex: 1;
+    }
+    .stat-chip .val { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+    .stat-chip .lbl { font-size: .8rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Toast ────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 20px;
+      font-size: .9rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,.5);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity .25s, transform .25s;
+      pointer-events: none;
+      z-index: 999;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 12px;
+      font-size: .78rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header>
+  <img src="Conscripts/Assets/Conscripts_Logo.png" alt="Logo" onerror="this.style.display='none'" />
+  <div>
+    <h1>CEC‑WAM‑HOT‑CORE</h1>
+    <div class="tagline">Unified System Interface · Offline‑First · PWA</div>
+  </div>
+  <div class="spacer"></div>
+  <button id="installBtn">⬇ Install App</button>
+  <div id="statusDot" title="Checking connection…"></div>
+</header>
+
+<!-- ═══════════════════════════ NAV ══════════════════════════════ -->
+<nav>
+  <button class="active" data-panel="dashboard">📊 Dashboard</button>
+  <button data-panel="data">📥 Data</button>
+  <button data-panel="charts">📈 Charts</button>
+  <button data-panel="eve">🎙 EVE</button>
+  <button data-panel="settings">⚙ Settings</button>
+</nav>
+
+<!-- ═══════════════════════════ MAIN ═════════════════════════════ -->
+<main>
+
+  <!-- ─── DASHBOARD ────────────────────────────────────────────── -->
+  <section class="panel active" id="panel-dashboard">
+    <div class="stats-row">
+      <div class="stat-chip"><div class="val" id="statRows">0</div><div class="lbl">Total Rows</div></div>
+      <div class="stat-chip"><div class="val" id="statCols">0</div><div class="lbl">Columns</div></div>
+      <div class="stat-chip"><div class="val" id="statSaved">0</div><div class="lbl">Saved Records</div></div>
+      <div class="stat-chip"><div class="val" id="statSource">—</div><div class="lbl">Last Source</div></div>
+    </div>
+    <div class="card">
+      <h2>Recent Data Preview</h2>
+      <div class="table-wrap" id="previewWrap">
+        <p style="color:var(--text-muted);font-size:.85rem;">Load data from the <strong>Data</strong> tab to see a preview here.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DATA ─────────────────────────────────────────────────── -->
+  <section class="panel" id="panel-data">
+
+    <!-- Google Sheets CSV -->
+    <div class="card">
+      <h2>🔗 Google Sheets (Live CSV)</h2>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;">
+        Paste the <strong>published CSV URL</strong> from your Google Sheet
+        (File → Share → Publish to web → CSV).
+      </p>
+      <div class="field">
+        <label for="sheetsUrl">Google Sheets CSV URL</label>
+        <input type="url" id="sheetsUrl" placeholder="https://docs.google.com/spreadsheets/d/…/pub?output=csv" />
+      </div>
+      <button class="btn" id="loadSheetsBtn">⬇ Fetch & Load</button>
+      <span id="sheetsStatus" style="margin-left:12px;font-size:.85rem;color:var(--text-muted);"></span>
+    </div>
+
+    <!-- Local file import -->
+    <div class="card">
+      <h2>📂 Local File Import (CSV / XLSX)</h2>
+      <div class="field">
+        <label for="fileInput">Choose a .csv or .xlsx file</label>
+        <input type="file" id="fileInput" accept=".csv,.xlsx" style="color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:8px;width:100%;" />
+      </div>
+      <button class="btn" id="loadFileBtn">📤 Import File</button>
+      <span id="fileStatus" style="margin-left:12px;font-size:.85rem;color:var(--text-muted);"></span>
+    </div>
+
+    <!-- Loaded data table -->
+    <div class="card">
+      <h2>📋 Loaded Data</h2>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+        <button class="btn secondary" id="saveDbBtn">💾 Save to IndexedDB</button>
+        <button class="btn secondary" id="loadDbBtn">📂 Load from IndexedDB</button>
+        <button class="btn danger"    id="clearDbBtn">🗑 Clear IndexedDB</button>
+        <button class="btn secondary" id="exportCsvBtn">⬇ Export CSV</button>
+      </div>
+      <div class="table-wrap" id="dataTableWrap">
+        <p style="color:var(--text-muted);font-size:.85rem;">No data loaded yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CHARTS ────────────────────────────────────────────────── -->
+  <section class="panel" id="panel-charts">
+    <div class="card">
+      <h2>Chart Configuration</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;">
+        <div class="field">
+          <label for="chartXCol">X‑Axis / Label Column</label>
+          <select id="chartXCol"><option value="">— select column —</option></select>
+        </div>
+        <div class="field">
+          <label for="chartYCol">Y‑Axis / Value Column</label>
+          <select id="chartYCol"><option value="">— select column —</option></select>
+        </div>
+        <div class="field">
+          <label for="chartType">Chart Type</label>
+          <select id="chartType">
+            <option value="bar">Bar</option>
+            <option value="line">Line</option>
+            <option value="pie">Pie</option>
+            <option value="doughnut">Doughnut</option>
+            <option value="polarArea">Polar Area</option>
+            <option value="radar">Radar</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="renderChartBtn">📈 Render Chart</button>
+    </div>
+    <div class="chart-grid" id="chartGrid">
+      <div class="chart-box">
+        <canvas id="mainChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <canvas id="summaryChart"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── EVE ──────────────────────────────────────────────────── -->
+  <section class="panel" id="panel-eve">
+    <div class="card">
+      <h2>🎙 EVE — Voice & Text Interface</h2>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;">
+        Type a command or press the microphone button to use voice input.
+        EVE will answer questions about your loaded data or perform actions.
+      </p>
+      <div id="eveOutput">EVE is ready. Say or type a command…</div>
+      <div class="eve-controls">
+        <button id="micBtn" title="Hold to speak">🎤</button>
+        <div class="field" style="flex:1;margin:0;">
+          <input type="text" id="eveInput" placeholder="Ask EVE something… e.g. 'summarize data', 'how many rows?'" />
+        </div>
+        <button class="btn" id="eveSendBtn">Send</button>
+        <button class="btn secondary" id="eveClearBtn">Clear</button>
+      </div>
+      <div style="margin-top:14px;">
+        <label for="voiceSelect">TTS Voice</label>
+        <select id="voiceSelect" style="max-width:320px;"></select>
+      </div>
+    </div>
+
+    <!-- PIN lock -->
+    <div class="card">
+      <h2>🔒 Local PIN (Optional)</h2>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;">
+        Set an optional offline PIN. It is hashed locally and never transmitted.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <input type="password" id="pinInput" placeholder="Enter PIN" style="max-width:180px;" />
+        <button class="btn" id="setPinBtn">Set PIN</button>
+        <button class="btn secondary" id="verifyPinBtn">Verify PIN</button>
+        <button class="btn danger" id="clearPinBtn">Clear PIN</button>
+      </div>
+      <p id="pinStatus" style="margin-top:10px;font-size:.85rem;color:var(--text-muted);"></p>
+    </div>
+  </section>
+
+  <!-- ─── SETTINGS ──────────────────────────────────────────────── -->
+  <section class="panel" id="panel-settings">
+    <div class="card">
+      <h2>⚙ Settings</h2>
+      <div class="field">
+        <label for="appTitle">App Title</label>
+        <input type="text" id="appTitle" value="CEC‑WAM‑HOT‑CORE" />
+      </div>
+      <div class="field">
+        <label for="rowLimit">Max rows to display in table (0 = all)</label>
+        <input type="text" id="rowLimit" value="200" style="max-width:120px;" />
+      </div>
+      <div class="field" style="display:flex;align-items:center;gap:10px;">
+        <input type="checkbox" id="ttsEnabled" checked style="width:auto;" />
+        <label for="ttsEnabled" style="margin:0;cursor:pointer;">Enable Text‑to‑Speech</label>
+      </div>
+      <button class="btn" id="saveSettingsBtn">Save Settings</button>
+    </div>
+
+    <div class="card">
+      <h2>ℹ About</h2>
+      <p style="font-size:.85rem;line-height:1.8;">
+        <strong>CEC‑WAM‑HOT‑CORE</strong> — Unified System Interface<br/>
+        Offline‑First · PWA‑Ready · Local‑Only Security<br/>
+        Version 1.0.0<br/><br/>
+        Author: <strong>Antwan White</strong><br/>
+        GitHub: <a href="https://github.com/whiteantwan58-tech" target="_blank" style="color:var(--accent);">https://github.com/whiteantwan58-tech</a><br/><br/>
+        No API keys. No telemetry. No cloud lock‑in.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<footer>
+  CEC‑WAM‑HOT‑CORE · Offline‑First PWA · © 2025 Antwan White / Quantum Sovereign Logistics Corp
+</footer>
+
+<!-- ═══════════════════════════ TOAST ════════════════════════════ -->
+<div id="toast"></div>
+
+<!-- ═════════════════════════ SCRIPTS ════════════════════════════ -->
+
+<!-- SheetJS (XLSX parsing) — loaded from CDN; SW caches it for offline -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   CEC‑WAM‑HOT‑CORE — Main Application Script
+   ════════════════════════════════════════════════════════════════ */
+
+'use strict';
+
+/* ── Service Worker registration ─────────────────────────────── */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+/* ── PWA install prompt ──────────────────────────────────────── */
+let deferredInstallPrompt = null;
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  installBtn.style.display = 'block';
+});
+installBtn.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  const { outcome } = await deferredInstallPrompt.userChoice;
+  if (outcome === 'accepted') installBtn.style.display = 'none';
+  deferredInstallPrompt = null;
+});
+
+/* ── Online / offline indicator ──────────────────────────────── */
+const dot = document.getElementById('statusDot');
+function updateOnline() {
+  dot.classList.toggle('online', navigator.onLine);
+  dot.title = navigator.onLine ? 'Online' : 'Offline';
+}
+updateOnline();
+window.addEventListener('online', updateOnline);
+window.addEventListener('offline', updateOnline);
+
+/* ── Toast ───────────────────────────────────────────────────── */
+const toastEl = document.getElementById('toast');
+let toastTimer;
+function toast(msg, color = 'var(--text)') {
+  toastEl.textContent = msg;
+  toastEl.style.color = color;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.remove('show'), 3200);
+}
+
+/* ── Tab navigation ──────────────────────────────────────────── */
+document.querySelectorAll('nav button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+  });
+});
+
+/* ── State ───────────────────────────────────────────────────── */
+let appData = { headers: [], rows: [] };  // { headers: string[], rows: string[][] }
+
+/* ── Settings (localStorage) ─────────────────────────────────── */
+function loadSettings() {
+  const s = JSON.parse(localStorage.getItem('cec_settings') || '{}');
+  document.getElementById('appTitle').value   = s.title    || 'CEC‑WAM‑HOT‑CORE';
+  document.getElementById('rowLimit').value   = s.rowLimit != null ? s.rowLimit : 200;
+  document.getElementById('ttsEnabled').checked = s.tts != null ? s.tts : true;
+}
+document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+  const s = {
+    title:    document.getElementById('appTitle').value,
+    rowLimit: parseInt(document.getElementById('rowLimit').value) || 0,
+    tts:      document.getElementById('ttsEnabled').checked,
+  };
+  localStorage.setItem('cec_settings', JSON.stringify(s));
+  toast('Settings saved ✓', 'var(--accent2)');
+});
+loadSettings();
+
+function getSetting(k, def) {
+  const s = JSON.parse(localStorage.getItem('cec_settings') || '{}');
+  return s[k] != null ? s[k] : def;
+}
+
+/* ── CSV parser (built‑in, no library needed) ────────────────── */
+function parseCSV(text) {
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const result = [];
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const row = [];
+    let inQuote = false, cur = '';
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuote && line[i + 1] === '"') { cur += '"'; i++; }
+        else inQuote = !inQuote;
+      } else if (ch === ',' && !inQuote) {
+        row.push(cur.trim()); cur = '';
+      } else cur += ch;
+    }
+    row.push(cur.trim());
+    result.push(row);
+  }
+  return result;
+}
+
+function setData(headers, rows, source) {
+  appData = { headers, rows };
+  updateStats(source);
+  renderDataTable();
+  updateColumnSelects();
+  renderDashboardPreview();
+}
+
+/* ── Stats ───────────────────────────────────────────────────── */
+function updateStats(source) {
+  document.getElementById('statRows').textContent   = appData.rows.length.toLocaleString();
+  document.getElementById('statCols').textContent   = appData.headers.length.toLocaleString();
+  document.getElementById('statSource').textContent = source || '—';
+}
+
+/* ── Data table render ───────────────────────────────────────── */
+function renderDataTable() {
+  const wrap = document.getElementById('dataTableWrap');
+  renderTable(wrap, appData, getSetting('rowLimit', 200));
+}
+
+function renderTable(container, data, limit) {
+  /* Clear container safely */
+  while (container.firstChild) container.removeChild(container.firstChild);
+
+  if (!data.headers.length) {
+    const p = document.createElement('p');
+    p.style.cssText = 'color:var(--text-muted);font-size:.85rem;';
+    p.textContent = 'No data loaded yet.';
+    container.appendChild(p);
+    return;
+  }
+
+  const displayRows = limit > 0 ? data.rows.slice(0, limit) : data.rows;
+
+  /* Build <table> via DOM API — no innerHTML on user-supplied data */
+  const table = document.createElement('table');
+
+  /* thead */
+  const thead = table.createTHead();
+  const hRow  = thead.insertRow();
+  data.headers.forEach(h => { hRow.insertCell().textContent = h; });
+  /* apply th styling to header cells */
+  Array.from(hRow.cells).forEach(c => {
+    c.scope = 'col';
+    const th = document.createElement('th');
+    th.textContent = c.textContent;
+    hRow.replaceChild(th, c);
+  });
+
+  /* tbody */
+  const tbody = document.createElement('tbody');
+  displayRows.forEach(r => {
+    const tr = tbody.insertRow();
+    data.headers.forEach((_, i) => { tr.insertCell().textContent = r[i] ?? ''; });
+  });
+  table.appendChild(tbody);
+  container.appendChild(table);
+
+  /* Row-count note (no user data — safe static text with numbers) */
+  if (limit > 0 && data.rows.length > limit) {
+    const note = document.createElement('p');
+    note.style.cssText = 'color:var(--text-muted);font-size:.8rem;margin-top:8px;';
+    note.textContent = `Showing first ${limit} of ${data.rows.length} rows.`;
+    container.appendChild(note);
+  }
+}
+
+/* ── Dashboard preview ───────────────────────────────────────── */
+function renderDashboardPreview() {
+  renderTable(document.getElementById('previewWrap'), appData, 10);
+}
+
+/* ── Column selects (Charts) ─────────────────────────────────── */
+function updateColumnSelects() {
+  ['chartXCol','chartYCol'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = '<option value="">— select column —</option>';
+    appData.headers.forEach(h => {
+      const o = document.createElement('option');
+      o.value = h; o.textContent = h;
+      sel.appendChild(o);
+    });
+  });
+}
+
+/* ── Google Sheets CSV fetch ─────────────────────────────────── */
+document.getElementById('loadSheetsBtn').addEventListener('click', async () => {
+  const url = document.getElementById('sheetsUrl').value.trim();
+  if (!url) { toast('Please enter a Sheets CSV URL', 'var(--warn)'); return; }
+  const status = document.getElementById('sheetsStatus');
+  status.textContent = 'Fetching…';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    if (rows.length < 1) throw new Error('Empty response');
+    const [headers, ...data] = rows;
+    setData(headers, data, 'Google Sheets');
+    status.textContent = `✓ Loaded ${data.length} rows`;
+    toast('Google Sheets data loaded ✓', 'var(--accent2)');
+  } catch (e) {
+    status.textContent = '✗ ' + e.message;
+    toast('Fetch failed: ' + e.message, 'var(--danger)');
+  }
+});
+
+/* ── Local file import ───────────────────────────────────────── */
+document.getElementById('loadFileBtn').addEventListener('click', () => {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) { toast('Please select a file', 'var(--warn)'); return; }
+  const status = document.getElementById('fileStatus');
+  status.textContent = 'Reading…';
+  const reader = new FileReader();
+  if (file.name.endsWith('.csv')) {
+    reader.onload = e => {
+      try {
+        const rows = parseCSV(e.target.result);
+        const [headers, ...data] = rows;
+        setData(headers, data, file.name);
+        status.textContent = `✓ Loaded ${data.length} rows`;
+        toast('CSV file loaded ✓', 'var(--accent2)');
+      } catch (err) {
+        status.textContent = '✗ ' + err.message;
+        toast('Parse error: ' + err.message, 'var(--danger)');
+      }
+    };
+    reader.readAsText(file);
+  } else {
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        if (!jsonData.length) throw new Error('Empty worksheet');
+        const [headers, ...data] = jsonData;
+        setData(headers.map(String), data.map(r => r.map(String)), file.name);
+        status.textContent = `✓ Loaded ${data.length} rows`;
+        toast('XLSX file loaded ✓', 'var(--accent2)');
+      } catch (err) {
+        status.textContent = '✗ ' + err.message;
+        toast('Parse error: ' + err.message, 'var(--danger)');
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+});
+
+/* ── IndexedDB persistence ───────────────────────────────────── */
+const DB_NAME = 'cec_wam', DB_VER = 1, STORE = 'datasets';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = () => {
+      if (!req.result.objectStoreNames.contains(STORE))
+        req.result.createObjectStore(STORE, { keyPath: 'id' });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+document.getElementById('saveDbBtn').addEventListener('click', async () => {
+  if (!appData.headers.length) { toast('No data to save', 'var(--warn)'); return; }
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).put({ id: 'main', ...appData, savedAt: Date.now() });
+    await new Promise((res, rej) => { tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+    document.getElementById('statSaved').textContent = appData.rows.length.toLocaleString();
+    toast('Saved to IndexedDB ✓', 'var(--accent2)');
+  } catch (e) { toast('Save failed: ' + e.message, 'var(--danger)'); }
+});
+
+document.getElementById('loadDbBtn').addEventListener('click', async () => {
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE, 'readonly');
+    const req = tx.objectStore(STORE).get('main');
+    req.onsuccess = () => {
+      const rec = req.result;
+      if (!rec) { toast('No saved data found', 'var(--warn)'); return; }
+      setData(rec.headers, rec.rows, 'IndexedDB');
+      document.getElementById('statSaved').textContent = rec.rows.length.toLocaleString();
+      toast('Loaded from IndexedDB ✓', 'var(--accent2)');
+    };
+    req.onerror = () => toast('Load failed', 'var(--danger)');
+  } catch (e) { toast('DB error: ' + e.message, 'var(--danger)'); }
+});
+
+document.getElementById('clearDbBtn').addEventListener('click', async () => {
+  if (!confirm('Clear all saved data from IndexedDB?')) return;
+  try {
+    const db = await openDB();
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).clear();
+    document.getElementById('statSaved').textContent = '0';
+    toast('IndexedDB cleared', 'var(--warn)');
+  } catch (e) { toast('Clear failed: ' + e.message, 'var(--danger)'); }
+});
+
+/* ── Export CSV ──────────────────────────────────────────────── */
+document.getElementById('exportCsvBtn').addEventListener('click', () => {
+  if (!appData.headers.length) { toast('No data to export', 'var(--warn)'); return; }
+  const lines = [appData.headers.join(',')];
+  appData.rows.forEach(r => lines.push(r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')));
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'cec-wam-export.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('CSV exported ✓', 'var(--accent2)');
+});
+
+/* ── Charts ──────────────────────────────────────────────────── */
+let mainChartInst = null, summaryChartInst = null;
+
+const PALETTE = [
+  '#58a6ff','#3fb950','#d29922','#f85149','#bc8cff',
+  '#79c0ff','#56d364','#e3b341','#ff7b72','#d2a8ff',
+];
+
+document.getElementById('renderChartBtn').addEventListener('click', () => {
+  const xCol  = document.getElementById('chartXCol').value;
+  const yCol  = document.getElementById('chartYCol').value;
+  const type  = document.getElementById('chartType').value;
+  if (!xCol || !yCol) { toast('Select both X and Y columns', 'var(--warn)'); return; }
+
+  const xi = appData.headers.indexOf(xCol);
+  const yi = appData.headers.indexOf(yCol);
+  const labels = appData.rows.map(r => r[xi] ?? '');
+  const values = appData.rows.map(r => parseFloat(r[yi]) || 0);
+
+  if (mainChartInst) mainChartInst.destroy();
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  mainChartInst = new Chart(ctx, {
+    type,
+    data: {
+      labels,
+      datasets: [{
+        label: yCol,
+        data: values,
+        backgroundColor: PALETTE.map((c, i) => c + 'cc'),
+        borderColor: PALETTE,
+        borderWidth: 1,
+      }],
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { labels: { color: '#e6edf3' } },
+        title: { display: true, text: `${yCol} by ${xCol}`, color: '#e6edf3' },
+      },
+      scales: type === 'pie' || type === 'doughnut' || type === 'polarArea' ? {} : {
+        x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+        y: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+      },
+    },
+  });
+
+  // Summary: numeric stats bar
+  const nums = values.filter(v => !isNaN(v));
+  if (nums.length && summaryChartInst) summaryChartInst.destroy();
+  if (nums.length) {
+    const sum   = nums.reduce((a, b) => a + b, 0);
+    const avg   = sum / nums.length;
+    const min   = Math.min(...nums);
+    const max   = Math.max(...nums);
+    const ctx2  = document.getElementById('summaryChart').getContext('2d');
+    summaryChartInst = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['Sum', 'Average', 'Min', 'Max'],
+        datasets: [{
+          label: 'Statistics for ' + yCol,
+          data: [sum, avg, min, max],
+          backgroundColor: ['#58a6ff99','#3fb95099','#d2992299','#f8514999'],
+          borderColor: ['#58a6ff','#3fb950','#d29922','#f85149'],
+          borderWidth: 1,
+        }],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#e6edf3' } },
+          title: { display: true, text: 'Summary Statistics', color: '#e6edf3' },
+        },
+        scales: {
+          x: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+          y: { ticks: { color: '#8b949e' }, grid: { color: '#30363d' } },
+        },
+      },
+    });
+  }
+  toast('Chart rendered ✓', 'var(--accent2)');
+});
+
+/* ── EVE Voice Interface ─────────────────────────────────────── */
+const eveOutput   = document.getElementById('eveOutput');
+const eveInput    = document.getElementById('eveInput');
+const micBtn      = document.getElementById('micBtn');
+const voiceSelect = document.getElementById('voiceSelect');
+
+// Populate TTS voice list
+function populateVoices() {
+  const voices = speechSynthesis.getVoices();
+  voiceSelect.innerHTML = '';
+  voices.forEach((v, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = `${v.name} (${v.lang})`;
+    voiceSelect.appendChild(o);
+  });
+}
+if ('speechSynthesis' in window) {
+  speechSynthesis.onvoiceschanged = populateVoices;
+  populateVoices();
+}
+
+function eveSpeak(text) {
+  if (!getSetting('tts', true)) return;
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  const voices = speechSynthesis.getVoices();
+  const idx = parseInt(voiceSelect.value) || 0;
+  if (voices[idx]) utt.voice = voices[idx];
+  utt.rate = 1; utt.pitch = 1;
+  speechSynthesis.speak(utt);
+}
+
+function eveWrite(text) {
+  eveOutput.textContent += '\n> ' + text;
+  eveOutput.scrollTop = eveOutput.scrollHeight;
+}
+
+function eveProcess(input) {
+  const q = input.toLowerCase().trim();
+  let response = '';
+
+  if (!q) { response = 'Please say or type a command.'; }
+  else if (q.includes('how many rows') || q.includes('row count')) {
+    response = appData.rows.length
+      ? `There are ${appData.rows.length} rows in the loaded dataset.`
+      : 'No data is currently loaded.';
+  } else if (q.includes('how many column') || q.includes('column count')) {
+    response = appData.headers.length
+      ? `There are ${appData.headers.length} columns: ${appData.headers.join(', ')}.`
+      : 'No data is currently loaded.';
+  } else if (q.includes('summarize') || q.includes('summary')) {
+    if (!appData.headers.length) {
+      response = 'No data loaded to summarize.';
+    } else {
+      response = `Dataset: ${appData.rows.length} rows × ${appData.headers.length} columns.\nColumns: ${appData.headers.join(', ')}.`;
+    }
+  } else if (q.includes('clear') || q.includes('reset')) {
+    eveOutput.textContent = 'EVE is ready.';
+    return;
+  } else if (q.includes('hello') || q.includes('hi')) {
+    response = 'Hello! I\'m EVE, your data interface assistant. How can I help?';
+  } else if (q.includes('help')) {
+    response = 'Commands: "how many rows", "how many columns", "summarize data", "clear", or ask me anything.';
+  } else if (q.includes('column') && q.includes('list')) {
+    response = appData.headers.length
+      ? 'Columns: ' + appData.headers.join(', ')
+      : 'No data loaded.';
+  } else {
+    response = `I heard: "${input}". I can answer questions about your loaded data. Try "how many rows?" or "summarize data".`;
+  }
+
+  eveWrite(response);
+  eveSpeak(response);
+}
+
+document.getElementById('eveSendBtn').addEventListener('click', () => {
+  const val = eveInput.value.trim();
+  if (!val) return;
+  eveWrite('You: ' + val);
+  eveInput.value = '';
+  eveProcess(val);
+});
+eveInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('eveSendBtn').click();
+});
+document.getElementById('eveClearBtn').addEventListener('click', () => {
+  eveOutput.textContent = 'EVE is ready. Say or type a command…';
+});
+
+// Speech Recognition
+let recognition = null;
+const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SpeechRec) {
+  recognition = new SpeechRec();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-US';
+  recognition.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    eveWrite('🎤 You: ' + transcript);
+    eveProcess(transcript);
+  };
+  recognition.onerror = e => eveWrite('⚠ Speech error: ' + e.error);
+  recognition.onend   = () => micBtn.classList.remove('listening');
+} else {
+  micBtn.title = 'Speech Recognition not supported in this browser';
+  micBtn.disabled = true;
+}
+
+micBtn.addEventListener('click', () => {
+  if (!recognition) { toast('Speech recognition not supported', 'var(--warn)'); return; }
+  if (micBtn.classList.contains('listening')) {
+    recognition.stop();
+    micBtn.classList.remove('listening');
+  } else {
+    recognition.start();
+    micBtn.classList.add('listening');
+    toast('Listening…', 'var(--accent)');
+  }
+});
+
+/* ── PIN (local, hashed) ─────────────────────────────────────── */
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pin));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+document.getElementById('setPinBtn').addEventListener('click', async () => {
+  const pin = document.getElementById('pinInput').value;
+  if (!pin) { toast('Enter a PIN first', 'var(--warn)'); return; }
+  const hash = await hashPin(pin);
+  localStorage.setItem('cec_pin', hash);
+  document.getElementById('pinInput').value = '';
+  document.getElementById('pinStatus').textContent = '✓ PIN set (hashed, stored locally only)';
+  toast('PIN set ✓', 'var(--accent2)');
+});
+
+document.getElementById('verifyPinBtn').addEventListener('click', async () => {
+  const pin = document.getElementById('pinInput').value;
+  const stored = localStorage.getItem('cec_pin');
+  if (!stored) { document.getElementById('pinStatus').textContent = 'No PIN is set.'; return; }
+  const hash = await hashPin(pin);
+  const ok = hash === stored;
+  document.getElementById('pinStatus').textContent = ok ? '✓ PIN correct' : '✗ PIN incorrect';
+  toast(ok ? 'PIN verified ✓' : 'Incorrect PIN', ok ? 'var(--accent2)' : 'var(--danger)');
+});
+
+document.getElementById('clearPinBtn').addEventListener('click', () => {
+  localStorage.removeItem('cec_pin');
+  document.getElementById('pinStatus').textContent = 'PIN cleared.';
+  toast('PIN cleared', 'var(--warn)');
+});
+</script>
+</body>
+</html>
