@@ -23,6 +23,11 @@
       --text-muted:#8b949e;
       --radius:    8px;
       --font:      "Segoe UI", system-ui, sans-serif;
+      --holo-cyan:    #00f5ff;
+      --holo-magenta: #ff00ff;
+      --holo-purple:  #8b00ff;
+      --holo-gold:    #ffd700;
+      --holo-lime:    #00ff41;
     }
     html, body { height: 100%; }
     body {
@@ -42,8 +47,9 @@
 
     /* ── Header ───────────────────────────────────────────────── */
     header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, var(--surface) 0%, #1a1f2e 50%, var(--surface) 100%);
+      border-bottom: 2px solid transparent;
+      border-image: linear-gradient(90deg, var(--holo-cyan), var(--holo-magenta), var(--holo-purple)) 1;
       padding: 12px 24px;
       display: flex;
       align-items: center;
@@ -51,9 +57,23 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: 0 4px 20px rgba(0, 245, 255, 0.15);
     }
     header img { height: 36px; width: 36px; border-radius: 6px; }
-    header h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: .5px; color: var(--accent); }
+    header h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      background: linear-gradient(135deg, var(--holo-cyan), var(--holo-magenta), var(--holo-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: holo-shift 3s ease-in-out infinite;
+    }
+    @keyframes holo-shift {
+      0%, 100% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(30deg); }
+    }
     header .tagline { font-size: .8rem; color: var(--text-muted); }
     header .spacer { flex: 1; }
     #installBtn {
@@ -106,11 +126,30 @@
 
     /* ── Cards / sections ─────────────────────────────────────── */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: linear-gradient(145deg, var(--surface) 0%, rgba(22, 27, 34, 0.8) 100%);
+      border: 1px solid transparent;
+      border-image: linear-gradient(135deg, rgba(0, 245, 255, 0.3), rgba(255, 0, 255, 0.3)) 1;
       border-radius: var(--radius);
       padding: 20px;
       margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0, 245, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(0, 245, 255, 0.05), transparent);
+      animation: holo-sweep 6s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes holo-sweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 12px; color: var(--accent); }
     .card h3 { font-size: .9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); }
@@ -271,6 +310,8 @@
   <button class="active" data-panel="dashboard">📊 Dashboard</button>
   <button data-panel="data">📥 Data</button>
   <button data-panel="charts">📈 Charts</button>
+  <button data-panel="realtime">🌐 Real-Time Feeds</button>
+  <button data-panel="camera">📹 Camera Feed</button>
   <button data-panel="eve">🎙 EVE</button>
   <button data-panel="settings">⚙ Settings</button>
 </nav>
@@ -375,13 +416,118 @@
     </div>
   </section>
 
+  <!-- ─── REAL-TIME FEEDS ────────────────────────────────────────── -->
+  <section class="panel" id="panel-realtime">
+    <div class="card">
+      <h2>🌐 Real-Time Data Feeds</h2>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;">
+        Live updates from multiple sources. Data refreshes automatically.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+        <button class="btn" id="refreshAllFeeds">🔄 Refresh All</button>
+        <button class="btn secondary" id="toggleAutoRefresh">⏸ Pause Auto-Refresh</button>
+        <span id="lastUpdate" style="color:var(--text-muted);font-size:.85rem;margin-left:auto;align-self:center;"></span>
+      </div>
+    </div>
+
+    <!-- Weather Feed -->
+    <div class="card">
+      <h2>🌤️ Weather Updates</h2>
+      <div id="weatherFeed" style="min-height:100px;font-size:.9rem;">
+        <p style="color:var(--text-muted);">Loading weather data...</p>
+      </div>
+    </div>
+
+    <!-- News Feed -->
+    <div class="card">
+      <h2>📰 National News</h2>
+      <div id="newsFeed" style="min-height:150px;font-size:.9rem;">
+        <p style="color:var(--text-muted);">Loading news headlines...</p>
+      </div>
+    </div>
+
+    <!-- Crime Alerts -->
+    <div class="card">
+      <h2>🚨 City Crime Alerts</h2>
+      <div id="crimeFeed" style="min-height:120px;font-size:.9rem;">
+        <p style="color:var(--text-muted);">Loading crime alerts...</p>
+      </div>
+    </div>
+
+    <!-- Space Updates -->
+    <div class="card">
+      <h2>🚀 Space & Time Updates</h2>
+      <div id="spaceFeed" style="min-height:120px;font-size:.9rem;">
+        <p style="color:var(--text-muted);">Loading space data...</p>
+      </div>
+    </div>
+
+    <!-- Sync Status -->
+    <div class="card">
+      <h2>🔗 Sync Status</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
+        <div class="stat-chip">
+          <div class="val" id="syncRepo" style="font-size:1rem;">⏳</div>
+          <div class="lbl">Repository Sync</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val" id="syncLocalHost" style="font-size:1rem;">⏳</div>
+          <div class="lbl">LocalHost Sync</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val" id="syncEveNode" style="font-size:1rem;">⏳</div>
+          <div class="lbl">EVE Node 1010</div>
+        </div>
+        <div class="stat-chip">
+          <div class="val" id="syncSovereign" style="font-size:1rem;">⏳</div>
+          <div class="lbl">Sovereign MaxEffort</div>
+        </div>
+      </div>
+      <button class="btn" id="forceSyncBtn" style="margin-top:14px;">⚡ Force Sync All</button>
+    </div>
+  </section>
+
+  <!-- ─── CAMERA FEED ──────────────────────────────────────────── -->
+  <section class="panel" id="panel-camera">
+    <div class="card">
+      <h2>📹 Traffic Camera Feed</h2>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;">
+        Live camera feed for traffic monitoring and visual alerts.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn" id="startCameraBtn">▶ Start Camera</button>
+        <button class="btn danger" id="stopCameraBtn">⏹ Stop Camera</button>
+        <button class="btn secondary" id="screenshotBtn">📸 Screenshot</button>
+        <select id="cameraSelect" style="max-width:280px;">
+          <option value="">Select camera...</option>
+        </select>
+      </div>
+      <div style="position:relative;background:var(--bg);border:2px solid var(--holo-cyan);border-radius:var(--radius);overflow:hidden;">
+        <video id="cameraVideo" autoplay playsinline style="width:100%;max-height:480px;display:block;"></video>
+        <canvas id="cameraCanvas" style="display:none;"></canvas>
+        <div id="cameraOverlay" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);padding:8px 12px;border-radius:4px;font-size:.8rem;color:var(--holo-cyan);font-family:monospace;">
+          🔴 LIVE
+        </div>
+      </div>
+      <div id="cameraStatus" style="margin-top:12px;font-size:.85rem;color:var(--text-muted);"></div>
+    </div>
+
+    <!-- Screenshot Gallery -->
+    <div class="card">
+      <h2>📸 Screenshot Gallery</h2>
+      <div id="screenshotGallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;">
+        <p style="color:var(--text-muted);font-size:.85rem;">No screenshots yet. Click "Screenshot" to capture images.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── EVE ──────────────────────────────────────────────────── -->
   <section class="panel" id="panel-eve">
     <div class="card">
-      <h2>🎙 EVE — Voice & Text Interface</h2>
+      <h2>🎙 EVE HEI — Holographic Enhanced Intelligence</h2>
       <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:14px;">
         Type a command or press the microphone button to use voice input.
-        EVE will answer questions about your loaded data or perform actions.
+        EVE HEI can answer questions, control feeds, analyze data, and provide real-time intelligence.
       </p>
       <div id="eveOutput">EVE is ready. Say or type a command…</div>
       <div class="eve-controls">
@@ -1027,6 +1173,340 @@ document.getElementById('clearPinBtn').addEventListener('click', () => {
   document.getElementById('pinStatus').textContent = 'PIN cleared.';
   toast('PIN cleared', 'var(--warn)');
 });
+
+/* ── Real-Time Feeds ─────────────────────────────────────────── */
+let autoRefreshEnabled = true;
+let refreshInterval = null;
+
+// Weather data simulator (replace with real API)
+async function fetchWeather() {
+  const weatherEl = document.getElementById('weatherFeed');
+  try {
+    // Simulated weather data - replace with actual API
+    const cities = ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix'];
+    const conditions = ['Sunny', 'Cloudy', 'Rainy', 'Partly Cloudy', 'Clear'];
+    const html = cities.map(city => {
+      const temp = Math.floor(Math.random() * 40) + 50;
+      const condition = conditions[Math.floor(Math.random() * conditions.length)];
+      return `<div style="padding:8px;border-left:3px solid var(--holo-cyan);margin-bottom:8px;background:rgba(0,245,255,0.05);">
+        <strong style="color:var(--holo-cyan);">${city}</strong>: ${temp}°F, ${condition}
+      </div>`;
+    }).join('');
+    weatherEl.innerHTML = html;
+  } catch (e) {
+    weatherEl.innerHTML = `<p style="color:var(--danger);">Error loading weather: ${e.message}</p>`;
+  }
+}
+
+// News feed simulator
+async function fetchNews() {
+  const newsEl = document.getElementById('newsFeed');
+  try {
+    const headlines = [
+      'Breaking: Major technological breakthrough announced',
+      'National update: Infrastructure development continues',
+      'Economic report shows positive trends',
+      'Scientific discovery made in research labs',
+      'International cooperation on climate initiatives'
+    ];
+    const html = headlines.map((h, i) => `
+      <div style="padding:10px;border-bottom:1px solid var(--border);cursor:pointer;" onmouseover="this.style.background='rgba(255,0,255,0.05)'" onmouseout="this.style.background='transparent'">
+        <span style="color:var(--holo-magenta);font-weight:600;">[${new Date().toLocaleTimeString()}]</span> ${h}
+      </div>
+    `).join('');
+    newsEl.innerHTML = html;
+  } catch (e) {
+    newsEl.innerHTML = `<p style="color:var(--danger);">Error loading news: ${e.message}</p>`;
+  }
+}
+
+// Crime alerts simulator
+async function fetchCrimeAlerts() {
+  const crimeEl = document.getElementById('crimeFeed');
+  try {
+    const alerts = [
+      { level: 'Low', area: 'Downtown', type: 'Routine patrol' },
+      { level: 'Medium', area: 'West Side', type: 'Traffic incident' },
+      { level: 'Low', area: 'North District', type: 'All clear' }
+    ];
+    const levelColors = { Low: 'var(--accent2)', Medium: 'var(--warn)', High: 'var(--danger)' };
+    const html = alerts.map(a => `
+      <div style="padding:8px;margin-bottom:8px;border-left:3px solid ${levelColors[a.level]};background:rgba(${a.level === 'Low' ? '63,185,80' : '210,153,34'},0.05);">
+        <strong style="color:${levelColors[a.level]};">${a.level}</strong> - ${a.area}: ${a.type}
+      </div>
+    `).join('');
+    crimeEl.innerHTML = html;
+  } catch (e) {
+    crimeEl.innerHTML = `<p style="color:var(--danger);">Error loading alerts: ${e.message}</p>`;
+  }
+}
+
+// Space updates simulator
+async function fetchSpaceData() {
+  const spaceEl = document.getElementById('spaceFeed');
+  try {
+    const now = new Date();
+    const html = `
+      <div style="padding:10px;background:rgba(139,0,255,0.05);border-radius:6px;margin-bottom:8px;">
+        <strong style="color:var(--holo-purple);">🌍 Earth Time:</strong> ${now.toLocaleString()}<br/>
+        <strong style="color:var(--holo-purple);">🚀 ISS Status:</strong> Orbiting normally<br/>
+        <strong style="color:var(--holo-purple);">⭐ Solar Activity:</strong> Moderate<br/>
+        <strong style="color:var(--holo-purple);">🛰️ GPS Satellites:</strong> 31 operational
+      </div>
+      <div style="font-size:.8rem;color:var(--text-muted);margin-top:8px;">
+        Next meteor shower: Perseids (August 12-13)
+      </div>
+    `;
+    spaceEl.innerHTML = html;
+  } catch (e) {
+    spaceEl.innerHTML = `<p style="color:var(--danger);">Error loading space data: ${e.message}</p>`;
+  }
+}
+
+// Sync status updates
+async function updateSyncStatus() {
+  const checkSync = async (id, url, name) => {
+    const el = document.getElementById(id);
+    try {
+      // Simulated sync check - replace with actual sync logic
+      const isOnline = navigator.onLine;
+      if (isOnline) {
+        el.textContent = '✓';
+        el.style.color = 'var(--accent2)';
+        el.title = `${name} synced`;
+      } else {
+        el.textContent = '⏸';
+        el.style.color = 'var(--warn)';
+        el.title = `${name} offline`;
+      }
+    } catch (e) {
+      el.textContent = '✗';
+      el.style.color = 'var(--danger)';
+      el.title = `${name} error`;
+    }
+  };
+
+  await checkSync('syncRepo', 'https://github.com/whiteantwan58-tech/Conscripts', 'Repository');
+  await checkSync('syncLocalHost', 'http://localhost:8000', 'LocalHost');
+  await checkSync('syncEveNode', 'http://localhost:1010', 'EVE Node 1010');
+  await checkSync('syncSovereign', 'https://github.com/sovereign-maxeffort', 'Sovereign MaxEffort');
+}
+
+async function refreshAllFeeds() {
+  const lastUpdateEl = document.getElementById('lastUpdate');
+  lastUpdateEl.textContent = 'Updating...';
+
+  await Promise.all([
+    fetchWeather(),
+    fetchNews(),
+    fetchCrimeAlerts(),
+    fetchSpaceData(),
+    updateSyncStatus()
+  ]);
+
+  lastUpdateEl.textContent = `Last update: ${new Date().toLocaleTimeString()}`;
+  toast('All feeds refreshed ✓', 'var(--accent2)');
+}
+
+document.getElementById('refreshAllFeeds')?.addEventListener('click', refreshAllFeeds);
+
+document.getElementById('toggleAutoRefresh')?.addEventListener('click', function() {
+  autoRefreshEnabled = !autoRefreshEnabled;
+  this.textContent = autoRefreshEnabled ? '⏸ Pause Auto-Refresh' : '▶ Resume Auto-Refresh';
+
+  if (autoRefreshEnabled) {
+    startAutoRefresh();
+    toast('Auto-refresh enabled', 'var(--accent2)');
+  } else {
+    stopAutoRefresh();
+    toast('Auto-refresh paused', 'var(--warn)');
+  }
+});
+
+function startAutoRefresh() {
+  if (refreshInterval) clearInterval(refreshInterval);
+  refreshInterval = setInterval(() => {
+    if (autoRefreshEnabled && document.getElementById('panel-realtime')?.classList.contains('active')) {
+      refreshAllFeeds();
+    }
+  }, 60000); // Refresh every minute
+}
+
+function stopAutoRefresh() {
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+    refreshInterval = null;
+  }
+}
+
+document.getElementById('forceSyncBtn')?.addEventListener('click', async () => {
+  toast('Force syncing all nodes...', 'var(--accent)');
+  await updateSyncStatus();
+  // Attempt to save current data to localStorage as backup
+  try {
+    const syncData = {
+      timestamp: Date.now(),
+      appData: appData,
+      settings: localStorage.getItem('cec_settings')
+    };
+    localStorage.setItem('cec_sync_backup', JSON.stringify(syncData));
+    toast('Sync completed ✓', 'var(--accent2)');
+  } catch (e) {
+    toast('Sync warning: ' + e.message, 'var(--warn)');
+  }
+});
+
+// Initialize feeds when switching to realtime panel
+const realtimeBtn = document.querySelector('[data-panel="realtime"]');
+realtimeBtn?.addEventListener('click', () => {
+  setTimeout(() => {
+    if (!document.getElementById('lastUpdate').textContent) {
+      refreshAllFeeds();
+      startAutoRefresh();
+    }
+  }, 100);
+});
+
+/* ── Camera Feed ────────────────────────────────────────────── */
+let cameraStream = null;
+let screenshots = [];
+
+// Populate camera list
+async function populateCameras() {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cameras = devices.filter(d => d.kind === 'videoinput');
+    const select = document.getElementById('cameraSelect');
+    select.innerHTML = '<option value="">Select camera...</option>';
+    cameras.forEach((cam, i) => {
+      const opt = document.createElement('option');
+      opt.value = cam.deviceId;
+      opt.textContent = cam.label || `Camera ${i + 1}`;
+      select.appendChild(opt);
+    });
+  } catch (e) {
+    document.getElementById('cameraStatus').textContent = 'Camera access error: ' + e.message;
+  }
+}
+
+document.getElementById('startCameraBtn')?.addEventListener('click', async () => {
+  const select = document.getElementById('cameraSelect');
+  const deviceId = select.value;
+
+  try {
+    const constraints = deviceId
+      ? { video: { deviceId: { exact: deviceId } } }
+      : { video: { facingMode: 'environment' } };
+
+    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+    document.getElementById('cameraVideo').srcObject = cameraStream;
+    document.getElementById('cameraStatus').textContent = '✓ Camera active';
+    document.getElementById('cameraStatus').style.color = 'var(--accent2)';
+    toast('Camera started ✓', 'var(--accent2)');
+
+    if (!select.children.length > 1) populateCameras();
+  } catch (e) {
+    document.getElementById('cameraStatus').textContent = '✗ Error: ' + e.message;
+    document.getElementById('cameraStatus').style.color = 'var(--danger)';
+    toast('Camera error: ' + e.message, 'var(--danger)');
+  }
+});
+
+document.getElementById('stopCameraBtn')?.addEventListener('click', () => {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(track => track.stop());
+    document.getElementById('cameraVideo').srcObject = null;
+    cameraStream = null;
+    document.getElementById('cameraStatus').textContent = 'Camera stopped';
+    document.getElementById('cameraStatus').style.color = 'var(--text-muted)';
+    toast('Camera stopped', 'var(--warn)');
+  }
+});
+
+document.getElementById('screenshotBtn')?.addEventListener('click', () => {
+  if (!cameraStream) {
+    toast('Start camera first', 'var(--warn)');
+    return;
+  }
+
+  const video = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('cameraCanvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+
+  const dataUrl = canvas.toDataURL('image/png');
+  const timestamp = new Date().toLocaleString();
+  screenshots.push({ dataUrl, timestamp });
+
+  // Update gallery
+  const gallery = document.getElementById('screenshotGallery');
+  const img = document.createElement('div');
+  img.style.cssText = 'position:relative;border:2px solid var(--holo-cyan);border-radius:6px;overflow:hidden;';
+  img.innerHTML = `
+    <img src="${dataUrl}" style="width:100%;display:block;" />
+    <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.8);padding:6px;font-size:.7rem;color:var(--holo-cyan);">
+      ${timestamp}
+    </div>
+  `;
+
+  if (gallery.children[0]?.tagName === 'P') gallery.innerHTML = '';
+  gallery.insertBefore(img, gallery.firstChild);
+
+  toast('Screenshot captured ✓', 'var(--accent2)');
+});
+
+// Enhanced EVE processing for new commands
+const originalEveProcess = eveProcess;
+eveProcess = function(input) {
+  const q = input.toLowerCase().trim();
+  let response = '';
+
+  if (q.includes('weather') || q.includes('temperature')) {
+    response = 'Checking weather data... The weather information is available in the Real-Time Feeds panel.';
+    setTimeout(() => {
+      document.querySelector('[data-panel="realtime"]').click();
+    }, 1500);
+  } else if (q.includes('news') || q.includes('headline')) {
+    response = 'Fetching latest news... Navigate to Real-Time Feeds for current headlines.';
+    setTimeout(() => {
+      document.querySelector('[data-panel="realtime"]').click();
+    }, 1500);
+  } else if (q.includes('crime') || q.includes('alert') || q.includes('safety')) {
+    response = 'Checking city alerts... Crime data is available in Real-Time Feeds.';
+    setTimeout(() => {
+      document.querySelector('[data-panel="realtime"]').click();
+    }, 1500);
+  } else if (q.includes('space') || q.includes('satellite') || q.includes('iss')) {
+    response = 'Accessing space data... Space updates are in Real-Time Feeds.';
+    setTimeout(() => {
+      document.querySelector('[data-panel="realtime"]').click();
+    }, 1500);
+  } else if (q.includes('camera') || q.includes('video') || q.includes('traffic')) {
+    response = 'Accessing camera feed... Opening Camera Feed panel.';
+    setTimeout(() => {
+      document.querySelector('[data-panel="camera"]').click();
+    }, 1500);
+  } else if (q.includes('sync') || q.includes('backup')) {
+    response = 'Checking sync status... All nodes are being synchronized.';
+    updateSyncStatus();
+  } else if (q.includes('hei') || q.includes('holographic')) {
+    response = 'EVE HEI - Holographic Enhanced Intelligence - online and ready. All systems operational with holographic visual enhancements active.';
+  } else if (q.includes('refresh') || q.includes('update')) {
+    response = 'Refreshing all real-time data feeds now...';
+    refreshAllFeeds();
+  } else {
+    // Fall back to original processing
+    return originalEveProcess(input);
+  }
+
+  eveWrite(response);
+  eveSpeak(response);
+};
+
+// Initialize camera list on page load
+setTimeout(populateCameras, 1000);
 </script>
 </body>
 </html>

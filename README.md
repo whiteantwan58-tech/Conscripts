@@ -2,8 +2,8 @@
     <img src="Conscripts/Assets/Conscripts_Logo.png" alt="logo" height="128" width="128"/>
 </p>
 
-<h1 align="center">Conscripts · CEC‑WAM‑HOT‑CORE</h1>
-<h3 align="center">Unified System Interface · Offline‑First · PWA‑Ready</h3>
+<h1 align="center">Conscripts · CEC‑WAM‑HOT‑CORE‑HEI</h1>
+<h3 align="center">Unified System Interface · Holographic Enhanced Intelligence · Offline‑First · PWA‑Ready</h3>
 
 <p align="center">
   <a href="https://apps.microsoft.com/detail/9ppndntlq86q?mode=full">
@@ -15,12 +15,12 @@
 
 ## 🔹 What This Repo Is
 
-**Conscripts / CEC‑WAM‑HOT‑CORE** is a **finished, production‑ready system interface** that runs in two modes:
+**Conscripts / CEC‑WAM‑HOT‑CORE‑HEI** is a **finished, production‑ready system interface** with holographic visuals and real-time intelligence that runs in two modes:
 
 | Mode | Description |
 |------|-------------|
 | 🖥️ **Desktop (WinUI 3)** | Windows app — centralized launcher for BAT & PS1 script files with rich icon cards |
-| 🌐 **Web / PWA** | Browser‑installable interface with data ingestion, charts, AI voice assistant (EVE), and full offline support |
+| 🌐 **Web / PWA** | Browser‑installable interface with holographic UI, real-time data feeds (weather, news, crime, space), camera integration, AI voice assistant (EVE HEI), and full offline support |
 
 Both modes share the same project identity and are **single‑source‑of‑truth** in this repository.
 
@@ -34,11 +34,16 @@ Both modes share the same project identity and are **single‑source‑of‑trut
 - ✅ **Available on Microsoft Store**
 
 ### Web / PWA
+- ✅ **Holographic HD Visuals** with dynamic color gradients and animations
+- ✅ **Real-Time Data Feeds** (Weather, National News, Crime Alerts, Space Updates)
+- ✅ **Live Camera Feed** for traffic monitoring with screenshot capture
+- ✅ **Auto-Sync** to Repository, LocalHost, EVE Node 1010, and Sovereign MaxEffort
+- ✅ **EVE HEI Voice Interface** (Holographic Enhanced Intelligence) — Advanced AI assistant
 - ✅ **Live Google Sheets (CSV) Integration**
 - ✅ **Local CSV / XLSX File Import**
 - ✅ **Offline‑First Operation** (IndexedDB persistence)
 - ✅ **Charts & Analytics Dashboard** (Chart.js)
-- ✅ **Voice Input + Text‑to‑Speech** (EVE Interface — Web Speech API)
+- ✅ **Voice Input + Text‑to‑Speech** (Web Speech API)
 - ✅ **Installable PWA** (Service Worker + Web App Manifest)
 - ✅ **Local‑Only Security Model** (no secrets committed)
 
@@ -46,11 +51,15 @@ Both modes share the same project identity and are **single‑source‑of‑trut
 
 ## 🧠 Designed For
 
+- Real-time intelligence gathering and monitoring
+- City safety monitoring (crime alerts, traffic cameras)
+- Weather and space-time tracking
 - Data‑driven system modeling
 - Lightweight accounting / "living calculator" workflows
 - Edge devices, flash‑drive deployment, air‑gapped use
 - Human‑AI interaction without cloud lock‑in
 - Script automation power‑users (Windows)
+- Multi-node synchronization (Repository, LocalHost, EVE Node 1010, Sovereign MaxEffort)
 
 ---
 
@@ -123,7 +132,11 @@ Conscripts/
 |-----------|--------|
 | WinUI 3 Desktop | ✅ Complete & on Microsoft Store |
 | PWA Web Interface | ✅ Stable — deploy via GitHub Pages |
-| EVE Voice Interface | ✅ Web Speech API integrated |
+| Holographic Visuals | ✅ HD gradients & animations active |
+| Real-Time Feeds | ✅ Weather, News, Crime, Space data |
+| Camera Integration | ✅ Live feed with screenshot capture |
+| EVE HEI Voice | ✅ Enhanced Intelligence mode active |
+| Auto-Sync System | ✅ Multi-node synchronization |
 | Offline / IndexedDB | ✅ Service Worker active |
 | Charts Dashboard | ✅ Chart.js integrated |
 

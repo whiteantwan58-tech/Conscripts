@@ -5,8 +5,8 @@
 
 'use strict';
 
-const CACHE_NAME    = 'cec-wam-v1';
-const CDN_CACHE     = 'cec-wam-cdn-v1';
+const CACHE_NAME    = 'cec-wam-holo-v2';
+const CDN_CACHE     = 'cec-wam-cdn-v2';
 
 /* Assets to pre-cache on install */
 const PRECACHE_URLS = [

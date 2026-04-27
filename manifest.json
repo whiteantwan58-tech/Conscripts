@@ -1,11 +1,11 @@
 {
-  "name": "CEC-WAM-HOT-CORE",
-  "short_name": "CEC-WAM",
-  "description": "Unified System Interface · Offline-First · PWA · Data Ingestion · Charts · EVE Voice Interface",
+  "name": "CEC-WAM-HOT-CORE-HEI",
+  "short_name": "CEC-WAM-HEI",
+  "description": "Unified System Interface · Holographic Enhanced Intelligence · Offline-First · PWA · Real-Time Feeds · Camera Integration · EVE HEI Voice Interface",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0d1117",
-  "theme_color": "#0d1117",
+  "theme_color": "#00f5ff",
   "orientation": "any",
   "icons": [
     {
@@ -15,7 +15,7 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity", "utilities"],
+  "categories": ["productivity", "utilities", "news", "weather"],
   "screenshots": [
     {
       "src": "Conscripts/Assets/screenshot1.png",
